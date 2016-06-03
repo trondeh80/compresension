@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <!-- build:css styles/popup-vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css styles/main.css -->
+    <link href="styles/main.css" rel="stylesheet">
+    <link href=" https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- endbuild -->
+  </head>
+  <body>
+   <div class="container">
+
+     <div class="row">
+
+       <div class="col-sm-12">
+
+         <a href="#" class="btn btn-block btn-success" id="activate">Activate</a>
+         <a href="#" class="btn btn-block btn-warning hidden" id="deactivate">Deactivate</a>
+
+       </div>
+
+       <div class="col-sm-12">
+
+         <form name="compression" id="compressionForm">
+
+         <div class="form-group">
+           <label>Threshold</label>
+           <input type="number" name="threshold" id="threshold" class="form-control" />
+         </div>
+
+         <div class="form-group">
+           <label>Knee</label>
+           <input type="number" name="knee" id="knee" class="form-control" />
+         </div>
+
+        <div class="form-group">
+           <label>Ratio</label>
+           <input type="number" name="ratio" id="ratio" class="form-control" />
+         </div>
+
+         <div class="form-group">
+           <label>Reduction</label>
+           <input type="number" name="reduction" id="reduction" class="form-control" />
+         </div>
+
+         <div class="form-group">
+           <label>Attack</label>
+           <input type="number" name="attack" id="attack" class="form-control" />
+         </div>
+
+           <div class="form-group">
+           <label>Release</label>
+           <input type="number" name="release" id="release" class="form-control" />
+         </div>
+
+         </form>
+
+       </div>
+
+     </div>
+
+   </div>
+
+    <!-- build:js scripts/popup-vendor.js -->
+    <!-- bower:js -->
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js scripts/popup.js -->
+    <script src="scripts/vendor/jquery-1.12.4.min.js"></script>
+    <script src="scripts/vendor/underscore.js"></script>
+    <script src="scripts/popup.js"></script>
+    <!-- endbuild -->
+  </body>
+</html>
