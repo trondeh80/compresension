@@ -7,6 +7,8 @@ App.prototype.messageEvent = messageEvent ;
 App.prototype.activate = activate;
 App.prototype.deactivate = deactivate;
 App.prototype.setOptions = setOptions;
+App.prototype.getGain = getGain;
+App.prototype.getCompressionOptions = getCompressionOptions;
 
 var application = new App();
 
@@ -21,9 +23,13 @@ function appConstructor(){
 
 function setOptions(obj){
   this.compression = obj.compression ;
+  this.gain = obj.gain ;
+
   _(this.compression).each(function(item, key){
     $('#'+key).val(item) ;
   });
+
+  $("#gain").val(this.gain);
 
   if (obj.isActive) {
     $('#activate').addClass('hidden') ;
@@ -41,29 +47,33 @@ function addListeners(event){
   $('form input').change(activateChanges.bind(this)) ;
 }
 
-function activateChanges(){
+function getCompressionOptions(){
   _(this.compression).each(function(item, key){
     this.compression[key] = $('#'+key).val() ;
   }.bind(this));
+  return this.compression;
+}
 
-  this.sendMessage({
+function getGain(){
+  return $('#gain').val();
+}
+
+function activateChanges(){
+   this.sendMessage({
     action:'updateCompression',
     args:{
-      compression:this.compression
+      compression:this.getCompressionOptions(),
+      gain:getGain()
     }
   }) ;
 }
 
 function activate(){
-
-  _(this.compression).each(function(item, key){
-    this.compression[key] = $('#'+key).val() ;
-  }.bind(this));
-
   this.sendMessage({
     action:'captureAudio',
     args:{
-      compression:this.compression
+      compression:this.getCompressionOptions(),
+      gain:this.getGain()
     }
   }) ;
   $('#activate').addClass('hidden') ;
@@ -74,11 +84,9 @@ function deactivate(){
   this.sendMessage({
     action:'deactivateCompression'
   }) ;
-
   $('#activate').removeClass('hidden') ;
   $('#deactivate').addClass('hidden') ;
 }
-
 
 function getPort(){
   if (!this.port) {

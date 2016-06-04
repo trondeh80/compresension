@@ -15,20 +15,17 @@ Compressor.prototype.updateCompression = updateCompression;
 Compressor.prototype.setCompressionOptions = setCompressionOptions;
 Compressor.prototype.reactivateCompression = reactivateCompression;
 Compressor.prototype.getPort = getPort;
-
+Compressor.prototype.getAnalyser = getAnalyser;
+Compressor.prototype.getGain = getGain;
+Compressor.prototype.setGainOptions = setGainOptions;
+Compressor.prototype.setGainAmount = setGainAmount;
+Compressor.prototype.getGainAmount = getGainAmount;
 
 function CompressorConstructor(Extension, msg) {
   this.isEnabled = false ;
   this.isActive = false;
   this.extension = Extension ;
-  // chrome.tabs.getSelected(null, function (tab) {
-  //   chrome.tabCapture.capture({
-  //     audio: true,
-  //     video: false
-  //   }, activateAudioCompression.bind(this));
-  // }.bind(this));
 }
-
 
 function messageEvent(msg) {
   if (typeof this[msg['action']] === "function") {
@@ -85,26 +82,58 @@ function setCompressionOptions(properties) {
 
 function updateCompression(msg){
   this.setCompressionOptions(msg.compression) ;
+  this.setGainOptions(msg.gain);
+}
+
+function setGainOptions(gain) {
+  this.setGainAmount(gain);
+  this.getGain().gain.value = gain;
 }
 
 function activateAudioCompression(mediaSource) {
   this.source = this.getContext().createMediaStreamSource(mediaSource);
   this.setCompressionOptions(this.getProperties());
   this.source.connect(this.getCompression());
-  this.getCompression().connect(this.getContext().destination);
+
+  // Original working (only compressor).
+  // this.getCompression().connect(this.getContext().destination);
+
+  // With gain
+  this.getCompression().connect(this.getGain()) ;
+  this.getGain().connect(this.getAnalyser()) ;
+  this.getAnalyser().connect(this.getContext().destination) ;
+
+  // with only visualizer
+  // this.getCompression().connect(this.getAnalyser());
+  // this.getAnalyser().connect(this.getContext().destination) ;
+
   this.isActive = true;
   this.isEnabled = true;
 }
 
+function getGain() {
+  if (!this.gain) {
+    this.gain = this.getContext().createGain();
+  }
+  return this.gain;
+}
+
+function getAnalyser(){
+  if (!this.analyser) {
+    this.analyser = this.getContext().createAnalyser();
+  }
+  return this.analyser;
+}
+
 function deactivateCompression(){
   this.source.disconnect(this.getCompression());
-  this.getCompression().disconnect(this.getContext().destination);
+  this.getAnalyser().disconnect(this.getContext().destination);
   this.source.connect(this.getContext().destination);
 }
 
 function reactivateCompression(){
   this.source.connect(this.getCompression());
-  this.getCompression().connect(this.getContext().destination);
+  this.getAnalyser().connect(this.getContext().destination);
   this.isActive = true;
 }
 
@@ -119,6 +148,14 @@ function getProperties() {
     });
 }
 
+function getGainAmount(){
+  return this.gainAmount || (this.gainAmount = 0.1) ;
+}
+
+function setGainAmount(_gain){
+  this.gainAmount = _gain;
+}
+
 function setProperties(_properties) {
   this.properties = _properties;
 }
@@ -126,6 +163,6 @@ function setProperties(_properties) {
 function getCompressionOptions() {
   this.sendMessage({
     action: 'setOptions',
-    args: {compression: this.getProperties(), isActive: this.isActive}
+    args: {compression: this.getProperties(), gain:this.getGainAmount(), isActive: this.isActive}
   });
 }
