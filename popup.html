@@ -26,7 +26,7 @@
 
        </div>
 
-           <div class="col-sm-10">
+           <div class="col-xs-12">
 
              <div class="form-group">
                <label>Threshold</label>
@@ -58,17 +58,29 @@
                <input type="number" name="release" id="release" class="form-control" />
              </div>
 
+               <hr />
+
+               <div class="form-group">
+                   <label>Gain</label>
+                   <input type="number" name="gain" id="gain" class="form-control" />
+               </div>
+
 
            </div>
-
-             <div class="col-sm-2">
-                 <h3>Gain:</h3>
-                 <input type="number" name="gain" id="gain" class="form-control" />
-             </div>
 
 
 
         </div>
+
+         <div class="row">
+             <div class="col-xs-12">
+
+                 <!-- Here we shall show our analyse data -->
+                 <canvas id="analyser"></canvas>
+
+             </div>
+         </div>
+
      </form>
 
    </div>

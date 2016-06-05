@@ -2,3 +2,7 @@ body {
   padding: 20px;
   width: 500px;
 }
+
+#analyser {
+  width: 100%;
+}
