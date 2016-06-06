@@ -19,11 +19,6 @@ var application = new App();
 function appConstructor() {
     this.getPort().onMessage.addListener(this.messageEvent.bind(this));
     $(document).ready(addListeners.bind(this));
-    //
-    //   // A bit hacky
-    // this.canvas = document.getElementById('analyse') ;
-    // this.context = this.canvas.getContext("2d");
-
     this.sendMessage({
         action: 'getCompressionOptions'
     });
@@ -114,8 +109,9 @@ function collectData() {
 
 function showAnalyse(args) {
     var WIDTH = this.getCanvas().scrollWidth;
-    var HEIGHT = 75;
+    var HEIGHT = 150 ;
     this.getCanvasContext().clearRect(0, 0, WIDTH, HEIGHT);
+    
 
     var barWidth = (WIDTH / args.bufferLength) * 2.5;
     var barHeight;
