@@ -15,7 +15,8 @@ Compressor.prototype.updateCompression = updateCompression;
 Compressor.prototype.setCompressionOptions = setCompressionOptions;
 Compressor.prototype.reactivateCompression = reactivateCompression;
 Compressor.prototype.getPort = getPort;
-Compressor.prototype.getAnalyser = getAnalyser;
+// Compressor.prototype.getAnalyser = getAnalyser;
+Compressor.prototype.getProcessor = getProcessor;
 Compressor.prototype.getGain = getGain;
 Compressor.prototype.setGainOptions = setGainOptions;
 Compressor.prototype.setGainAmount = setGainAmount;
@@ -100,9 +101,15 @@ function activateAudioCompression(mediaSource) {
     // this.getCompression().connect(this.getContext().destination);
 
     // With gain
+    // this.getCompression().connect(this.getGain());
+    // this.getGain().connect(this.getAnalyser());
+    // this.getAnalyser().connect(this.getContext().destination);
+
+    // With gain and processor (db meter)
     this.getCompression().connect(this.getGain());
-    this.getGain().connect(this.getAnalyser());
-    this.getAnalyser().connect(this.getContext().destination);
+    this.getGain().connect(this.getContext().destination);
+    this.getProcessor().connect(this.getContext().destination);
+
 
     // with only visualizer
     // this.getCompression().connect(this.getAnalyser());
@@ -119,25 +126,44 @@ function getGain() {
     return this.gain;
 }
 
-function getAnalyser() {
-    if (!this.analyser) {
-        this.analyser = this.getContext().createAnalyser();
-        this.analyser.fftSize = 2048;
-        this.analyseData = new Uint8Array(this.analyser.frequencyBinCount);
+// function getAnalyser() {
+//     if (!this.analyser) {
+//         this.analyser = this.getContext().createAnalyser();
+//         this.analyser.fftSize = 2048;
+//         this.analyseData = new Uint8Array(this.analyser.frequencyBinCount);
+//     }
+//     return this.analyser;
+// }
+
+function getProcessor(){
+    if (!this.processor) {
+        this.processor = this.getContext().createScriptProcessor(2048, 1, 1) ;
+        this.processor.onaudioprocess = getAnalyseData.bind(this);
     }
-    return this.analyser;
+    return this.processor ;
 }
 
-function getAnalyseData() {
-    this.getAnalyser().getByteTimeDomainData(this.analyseData);
+function getAnalyseData(evt) {
+    if (!evt) return;
+    var data = evt.inputBuffer.getChannelData(0);
     this.sendMessage({
         action: 'showAnalyse',
         args: {
-            data: this.analyseData,
-            bufferLength: this.getAnalyser().frequencyBinCount
+            data: data
         }
     })
 }
+
+// function getAnalyseData() {
+//     this.getAnalyser().getByteTimeDomainData(this.analyseData);
+//     this.sendMessage({
+//         action: 'showAnalyse',
+//         args: {
+//             data: this.analyseData,
+//             bufferLength: this.getAnalyser().frequencyBinCount
+//         }
+//     })
+// }
 
 function deactivateCompression() {
     this.source.disconnect(this.getCompression());

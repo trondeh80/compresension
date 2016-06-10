@@ -111,29 +111,37 @@ function showAnalyse(args) {
     var WIDTH = this.getCanvas().scrollWidth;
     var HEIGHT = 150 ;
     this.getCanvasContext().clearRect(0, 0, WIDTH, HEIGHT);
-    
 
-    var barWidth = (WIDTH / args.bufferLength) * 2.5;
-    var barHeight;
-    var x = 0;
-    for (var i = 0; i < args.bufferLength; i++) {
-        barHeight = args.data[i] / 2;
-        this.getCanvasContext().fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
-        this.getCanvasContext().fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight);
-        x += barWidth + 1;
+    var rms, len = 2048, total = 0, i = 0;
+    while ( i < len ) {
+        total += Math.abs( args.data[i++] ) ;
     }
+    rms = Math.sqrt( total / len ) ;
 
-    // window.requestAnimationFrame(function () {
-    //     var barWidth = (WIDTH / args.bufferLength) * 2.5;
-    //     var barHeight;
-    //     var x = 0;
-    //     for (var i = 0; i < args.bufferLength; i++) {
-    //         barHeight = args.data[i] / 2;
-    //         this.getCanvasContext().fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
-    //         this.getCanvasContext().fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight);
-    //         x += barWidth + 1;
-    //     }
-    // }.bind(this));
+    var widthPercent = rms * 100  ;
+    var width = (WIDTH * widthPercent) /100;
+
+    this.getCanvasContext().fillStyle = 'rgb(12,50,50)';
+    this.getCanvasContext().fillRect(0, HEIGHT, width, HEIGHT);
+
+
+    // var barWidth = (WIDTH / args.bufferLength) * 2.5;
+    // var barHeight;
+    // var x = 0;
+    // for (var i = 0; i < args.bufferLength; i++) {
+    //     barHeight = args.data[i] / 2;
+    //     this.getCanvasContext().fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
+    //     this.getCanvasContext().fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight);
+    //     x += barWidth + 1;
+    // }
+
+}
+function getRMSValue(args){
+    var rms, len = args.data.length, total = 0, i = 0;
+    while ( i < len ) total += Math.abs( args.data[i++] ) ;
+    rms = Math.sqrt( total / len ) ;
+
+    var widthPercent = ( rms * 100 ) + '%' ;
 }
 
 function deactivate() {
