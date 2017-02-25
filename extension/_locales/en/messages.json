@@ -1,10 +1,10 @@
 {
   "appName": {
-    "message": "trondstension",
+    "message": "Compresension",
     "description": "The name of the application"
   },
   "appDescription": {
-    "message": "My Chrome Extension",
+    "message": "A chrome extension to enable audio compression on the audio played in a tab",
     "description": "The description of the application"
   }
 }
