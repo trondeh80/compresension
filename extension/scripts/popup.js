@@ -1,5 +1,5 @@
 'use strict';
-var App = appConstructor;
+const App = appConstructor;
 App.prototype.sendMessage = sendMessage;
 App.prototype.addListeners = addListeners;
 App.prototype.getPort = getPort;
@@ -14,11 +14,12 @@ App.prototype.showAnalyse = showAnalyse;
 App.prototype.getCanvasContext = getCanvasContext;
 App.prototype.getCanvas = getCanvas;
 
-var application = new App();
+const application = new App();
 
 function appConstructor() {
     this.getPort().onMessage.addListener(this.messageEvent.bind(this));
     $(document).ready(addListeners.bind(this));
+
     this.sendMessage({
         action: 'getCompressionOptions'
     });

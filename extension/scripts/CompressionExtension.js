@@ -1,12 +1,14 @@
 'use strict';
 
-var Compressions = compressionConstructor ;
+const Compressions = compressionConstructor ;
 Compressions.prototype.messageEvent = messageEvent;
 Compressions.prototype.getPort = getPort;
 
 function compressionConstructor(){
 
   this.tabs = {};
+
+  debugger;
 
   chrome.runtime.onInstalled.addListener(function (details) {
     // console.log('previousVersion', details.previousVersion);

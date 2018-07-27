@@ -1,6 +1,6 @@
 'use strict';
-(function () {
-    var Compressor = CompressorConstructor;
+(function (GLOBAL, chrome) {
+    const Compressor = CompressorConstructor;
     Compressor.prototype.activateAudioCompression = activateAudioCompression;
     Compressor.prototype.deactivateCompression = deactivateCompression;
     Compressor.prototype.getContext = getContext;
@@ -22,7 +22,9 @@
     Compressor.prototype.getGainAmount = getGainAmount;
     Compressor.prototype.getAnalyseData = getAnalyseData;
 
-    function CompressorConstructor(Extension, msg) {
+    GLOBAL.Compressor = Compressor;
+
+    function CompressorConstructor(Extension) {
         this.isEnabled = false;
         this.isActive = false;
         this.extension = Extension;
@@ -44,7 +46,8 @@
 
     function captureAudio(msg) {
         this.setProperties(msg.compression);
-        chrome.tabs.getSelected(null, function (tab) {
+
+        chrome.tabs.getSelected(null, (tab) => {
             this.tab = tab;
             if (!this.isEnabled) {
                 chrome.tabCapture.capture({
@@ -54,7 +57,8 @@
             } else {
                 this.reactivateCompression();
             }
-        }.bind(this));
+        });
+
     }
 
     function getContext() {
@@ -76,7 +80,7 @@
         this.getCompression().threshold.value = properties.threshold;
         this.getCompression().knee.value = properties.knee;
         this.getCompression().ratio.value = properties.ratio;
-        this.getCompression().reduction.value = properties.reduction;
+        this.getCompression().reduction = properties.reduction;
         this.getCompression().attack.value = properties.attack;
         this.getCompression().release.value = properties.release;
     }
@@ -92,17 +96,19 @@
     }
 
     function activateAudioCompression(mediaSource) {
-        this.source = this.getContext().createMediaStreamSource(mediaSource);
-        this.setCompressionOptions(this.getProperties());
-        this.source.connect(this.getCompression());
+        if (mediaSource) {
+            this.source = this.getContext().createMediaStreamSource(mediaSource);
+            this.setCompressionOptions(this.getProperties());
+            this.source.connect(this.getCompression());
 
-        // With gain and processor (db meter)
-        this.getCompression().connect(this.getGain());
-        this.getGain().connect(this.getContext().destination);
-        this.getProcessor().connect(this.getContext().destination);
+            // With gain and processor (db meter)
+            this.getCompression().connect(this.getGain());
+            this.getGain().connect(this.getContext().destination);
+            this.getProcessor().connect(this.getContext().destination);
 
-        this.isActive = true;
-        this.isEnabled = true;
+            this.isActive = true;
+            this.isEnabled = true;
+        }
     }
 
     function getGain() {
@@ -131,11 +137,12 @@
         })
     }
 
-
     function deactivateCompression() {
-        this.source.disconnect(this.getCompression());
-        this.getAnalyser().disconnect(this.getContext().destination);
-        this.source.connect(this.getContext().destination);
+        if (this.source && this.source.disconnect) {
+            this.source.disconnect(this.getCompression());
+            this.getAnalyser().disconnect(this.getContext().destination);
+            this.source.connect(this.getContext().destination);
+        }
     }
 
     function reactivateCompression() {
@@ -146,13 +153,13 @@
 
     function getProperties() {
         return this.properties || (this.properties = {
-                threshold: -50,
-                knee: 40,
-                ratio: 12,
-                reduction: -40,
-                attack: 0,
-                release: 0.25
-            });
+            threshold: -50,
+            knee: 40,
+            ratio: 12,
+            reduction: -40,
+            attack: 0,
+            release: 0.25
+        });
     }
 
     function getGainAmount() {
@@ -170,7 +177,7 @@
     function getCompressionOptions() {
         this.sendMessage({
             action: 'setOptions',
-            args: {compression: this.getProperties(), gain: this.getGainAmount(), isActive: this.isActive}
+            args: { compression: this.getProperties(), gain: this.getGainAmount(), isActive: this.isActive }
         });
     }
-})();
+})(window, chrome);

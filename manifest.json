@@ -1,28 +1,28 @@
 {
-  "name": "Squash it",
-  "version": "0.0.2",
-  "manifest_version": 2,
+  "name": "Chrome Tab Compressor",
+  "version": "0.0.3",
+  "manifest_version": 3,
   "description": "Adds compression to the current tab",
   "icons": {
-    "16": "images/icon-16.png",
-    "128": "images/icon-128.png"
+    "16": "extension/images/icon-16.png",
+    "128": "extension/images/icon-128.png"
   },
   "default_locale": "en",
   "background": {
     "scripts": [
-      "scripts/AudioCompression.js",
-      "scripts/CompressionExtension.js",
-      "scripts/chromereload.js",
-      "scripts/background.js"
+      "extension/scripts/AudioCompression.js",
+      "extension/scripts/CompressionExtension.js",
+      "extension/scripts/chromereload.js",
+      "extension/scripts/background.js"
     ]
   },
   "permissions": ["tabCapture", "activeTab"],
   "page_action": {
     "default_icon": {
-      "19": "images/icon-19.png",
-      "38": "images/icon-38.png"
+      "19": "extension/images/icon-19.png",
+      "38": "extension/images/icon-38.png"
     },
-    "default_title": "trondstension",
+    "default_title": "Chrome Tab Compressor",
     "default_popup": "popup.html"
   },
   "content_security_policy": "script-src 'self' https://maxcdn.bootstrapcdn.com; object-src 'self'"
