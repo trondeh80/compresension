@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <!-- build:css styles/popup-vendor.css -->
     <!-- bower:css -->
@@ -11,87 +11,101 @@
     <link href=" https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- endbuild -->
-  </head>
-  <body>
-   <div class="container">
+</head>
+<body>
+<div class="container">
 
-     <form name="compression" id="compressionForm">
+    <form name="compression" id="compressionForm">
 
-     <div class="row">
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="#" class="btn btn-block btn-success" id="activate">Activate</a>
+                <a href="#" class="btn btn-block btn-warning hidden" id="deactivate">Deactivate</a>
+            </div>
+        </div>
+        <div class="row">
 
-       <div class="col-sm-12">
+            <div class="col-xs-12">
 
-         <a href="#" class="btn btn-block btn-success" id="activate">Activate</a>
-         <a href="#" class="btn btn-block btn-warning hidden" id="deactivate">Deactivate</a>
+                <div class="form-group input-threshold">
+                    <label for="threshold">Threshold
+                        <div class="value"></div>
+                    </label>
+                    <input type="range" min="0" max="250" value="-42" name="threshold" id="threshold"
+                           class="form-control"/>
+                </div>
 
-       </div>
+                <div class="form-group input-range">
+                    <label for="range">Knee
+                        <div class="value"></div>
+                    </label>
+                    <input type="range" min="0" max="90" name="knee" id="knee" class="form-control"/>
+                </div>
 
-           <div class="col-xs-12">
+                <div class="form-group  input-ratio">
+                    <label for="ratio">Ratio
+                        <div class="value"></div>
+                    </label>
+                    <input type="range" min="0" max="90" name="ratio" id="ratio" class="form-control"/>
+                </div>
 
-             <div class="form-group">
-               <label>Threshold</label>
-               <input type="number" name="threshold" id="threshold" class="form-control" />
-             </div>
+                <div class="form-group  input-reduction">
+                    <label for="reduction">Reduction
+                        <div class="value"></div>
+                    </label>
+                    <input type="range" min="0" max="90" name="reduction" id="reduction" class="form-control"/>
+                </div>
 
-             <div class="form-group">
-               <label>Knee</label>
-               <input type="number" name="knee" id="knee" class="form-control" />
-             </div>
+                <div class="form-group input-attack">
+                    <label>Attack
+                        <div class="value"></div>
+                    </label>
+                    <input type="range" min="0" max="9999" name="attack" id="attack" class="form-control"/>
+                </div>
 
-            <div class="form-group">
-               <label>Ratio</label>
-               <input type="number" name="ratio" id="ratio" class="form-control" />
-             </div>
+                <div class="form-group input-release">
+                    <label>Release
+                        <div class="value"></div>
+                    </label>
+                    <input type="range" min="0" max="999" name="release" id="release" class="form-control"/>
+                </div>
 
-             <div class="form-group">
-               <label>Reduction</label>
-               <input type="number" name="reduction" id="reduction" class="form-control" />
-             </div>
+                <hr/>
 
-             <div class="form-group">
-               <label>Attack</label>
-               <input type="number" name="attack" id="attack" class="form-control" />
-             </div>
-
-               <div class="form-group">
-               <label>Release</label>
-               <input type="number" name="release" id="release" class="form-control" />
-             </div>
-
-               <hr />
-
-               <div class="form-group">
-                   <label>Gain</label>
-                   <input type="number" name="gain" id="gain" class="form-control" />
-               </div>
+                <div class="form-group input-gain">
+                    <label>Gain
+                        <div class="value"></div>
+                    </label>
+                    <input type="range" min="0" max="11" name="gain" id="gain" class="form-control"/>
+                </div>
 
 
-           </div>
+            </div>
 
         </div>
 
-         <div class="row">
-             <div class="col-xs-12">
+        <div class="row">
+            <div class="col-xs-12">
 
-                 <!-- Here we shall show our analyse data -->
-                 <canvas id="analyser"></canvas>
+                <!-- Here we shall show our analyse data -->
+                <canvas id="analyser"></canvas>
 
-             </div>
-         </div>
+            </div>
+        </div>
 
-     </form>
+    </form>
 
-   </div>
+</div>
 
-    <!-- build:js scripts/popup-vendor.js -->
-    <!-- bower:js -->
-    <!-- endbower -->
-    <!-- endbuild -->
+<!-- build:js scripts/popup-vendor.js -->
+<!-- bower:js -->
+<!-- endbower -->
+<!-- endbuild -->
 
-    <!-- build:js scripts/popup.js -->
-    <script src="extension/scripts/vendor/jquery-1.12.4.min.js"></script>
-    <script src="extension/scripts/vendor/underscore.js"></script>
-    <script src="extension/scripts/popup.js"></script>
-    <!-- endbuild -->
-  </body>
+<!-- build:js scripts/popup.js -->
+<script src="extension/scripts/vendor/jquery-1.12.4.min.js"></script>
+<script src="extension/scripts/vendor/underscore.js"></script>
+<script src="extension/scripts/popup.js"></script>
+<!-- endbuild -->
+</body>
 </html>

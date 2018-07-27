@@ -1,6 +1,6 @@
 'use strict';
 (function () {
 
-  var ext = new Compressions();
+  const ext = new Compressions();
   
 })();

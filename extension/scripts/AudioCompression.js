@@ -21,12 +21,14 @@
     Compressor.prototype.setGainAmount = setGainAmount;
     Compressor.prototype.getGainAmount = getGainAmount;
     Compressor.prototype.getAnalyseData = getAnalyseData;
+    Compressor.prototype.setDisconected = setDisconected;
 
     GLOBAL.Compressor = Compressor;
 
     function CompressorConstructor(Extension) {
         this.isEnabled = false;
         this.isActive = false;
+        this.isConnected = false;
         this.extension = Extension;
     }
 
@@ -37,11 +39,21 @@
     }
 
     function getPort() {
-        return this.extension.getPort();
+        const port = this.extension.getPort();
+        port.onDisconnect.addListener = () => {
+            this.setDisconected(false);
+        };
+
+        return port;
+    }
+
+    function setDisconected(status) {
+        this.disconnected = status;
     }
 
     function sendMessage(msg) {
-        this.getPort().postMessage(msg);
+        const p = this.getPort();
+        this.disconnected === false && p.postMessage(msg);
     }
 
     function captureAudio(msg) {
@@ -50,10 +62,7 @@
         chrome.tabs.getSelected(null, (tab) => {
             this.tab = tab;
             if (!this.isEnabled) {
-                chrome.tabCapture.capture({
-                    audio: true,
-                    video: false
-                }, activateAudioCompression.bind(this));
+                chrome.tabCapture.capture({ audio: true, video: false }, activateAudioCompression.bind(this));
             } else {
                 this.reactivateCompression();
             }
@@ -77,17 +86,18 @@
 
     function setCompressionOptions(properties) {
         this.setProperties(properties);
-        this.getCompression().threshold.value = properties.threshold;
-        this.getCompression().knee.value = properties.knee;
-        this.getCompression().ratio.value = properties.ratio;
-        this.getCompression().reduction = properties.reduction;
-        this.getCompression().attack.value = properties.attack;
-        this.getCompression().release.value = properties.release;
+
+        const cmp = this.getCompression();
+
+        const keys = Object.keys(properties);
+        keys.forEach(property =>
+            cmp[property] && cmp[property].setValueAtTime &&
+                cmp[property].setValueAtTime(properties[property], this.getContext().currentTime));
     }
 
     function updateCompression(msg) {
-        this.setCompressionOptions(msg.compression);
-        this.setGainOptions(msg.gain);
+        msg.compression && this.setCompressionOptions(msg.compression);
+        msg.gain && this.setGainOptions(msg.gain);
     }
 
     function setGainOptions(gain) {
@@ -128,7 +138,7 @@
 
     function getAnalyseData(evt) {
         if (!evt) return;
-        var data = evt.inputBuffer.getChannelData(0);
+        const data = evt.inputBuffer.getChannelData(0);
         this.sendMessage({
             action: 'showAnalyse',
             args: {
@@ -140,14 +150,14 @@
     function deactivateCompression() {
         if (this.source && this.source.disconnect) {
             this.source.disconnect(this.getCompression());
-            this.getAnalyser().disconnect(this.getContext().destination);
+            // this.getAnalyser().disconnect(this.getContext().destination);
             this.source.connect(this.getContext().destination);
         }
     }
 
     function reactivateCompression() {
         this.source.connect(this.getCompression());
-        this.getAnalyser().connect(this.getContext().destination);
+        // this.getAnalyser().connect(this.getContext().destination);
         this.isActive = true;
     }
 
@@ -177,7 +187,11 @@
     function getCompressionOptions() {
         this.sendMessage({
             action: 'setOptions',
-            args: { compression: this.getProperties(), gain: this.getGainAmount(), isActive: this.isActive }
+            args: {
+                compression: this.getProperties(),
+                gain: this.getGainAmount(),
+                isActive: this.isActive
+            }
         });
     }
 })(window, chrome);
