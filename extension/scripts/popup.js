@@ -44,9 +44,7 @@ function setOptions(obj) {
     this.gain = obj.gain;
 
     // Setting the options for compression:
-    _(this.compression).each(function (item, key) {
-        $('#' + key).val(item);
-    });
+    _(this.compression).each((item, key) => $('#' + key).val(item));
 
     $("#gain").val(this.gain);
 
@@ -96,8 +94,6 @@ function activate() {
         }
     });
 
-    this.analyseTicker = setInterval(this.collectData.bind(this), 200);
-
     $('#activate').addClass('hidden');
     $('#deactivate').removeClass('hidden');
 }
@@ -109,18 +105,18 @@ function collectData() {
 }
 
 function showAnalyse(args) {
-    var WIDTH = this.getCanvas().scrollWidth;
-    var HEIGHT = 150 ;
+    const WIDTH = this.getCanvas().scrollWidth;
+    const HEIGHT = 150 ;
     this.getCanvasContext().clearRect(0, 0, WIDTH, HEIGHT);
 
-    var rms, len = 2048, total = 0, i = 0;
+    let rms, len = 2048, total = 0, i = 0;
     while ( i < len ) {
         total += Math.abs( args.data[i++] ) ;
     }
     rms = Math.sqrt( total / len ) ;
 
-    var widthPercent = rms * 100  ;
-    var width = (WIDTH * widthPercent) /100;
+    const widthPercent = rms * 100  ;
+    const width = (WIDTH * widthPercent) /100;
 
     this.getCanvasContext().fillStyle = 'rgb(12,50,50)';
     this.getCanvasContext().fillRect(0, HEIGHT, width, HEIGHT);

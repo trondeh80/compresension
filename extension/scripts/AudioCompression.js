@@ -21,14 +21,12 @@
     Compressor.prototype.setGainAmount = setGainAmount;
     Compressor.prototype.getGainAmount = getGainAmount;
     Compressor.prototype.getAnalyseData = getAnalyseData;
-    Compressor.prototype.setDisconected = setDisconected;
 
     GLOBAL.Compressor = Compressor;
 
     function CompressorConstructor(Extension) {
         this.isEnabled = false;
         this.isActive = false;
-        this.isConnected = false;
         this.extension = Extension;
     }
 
@@ -39,21 +37,16 @@
     }
 
     function getPort() {
-        const port = this.extension.getPort();
-        port.onDisconnect.addListener = () => {
-            this.setDisconected(false);
-        };
-
-        return port;
-    }
-
-    function setDisconected(status) {
-        this.disconnected = status;
+        return this.extension.getPort();
     }
 
     function sendMessage(msg) {
-        const p = this.getPort();
-        this.disconnected === false && p.postMessage(msg);
+        try {
+            const p = this.getPort();
+            p.postMessage(msg);
+        } catch (ex) {
+            // Probably in a disconnected state3. IE the popup is not open.
+        }
     }
 
     function captureAudio(msg) {
@@ -150,20 +143,18 @@
     function deactivateCompression() {
         if (this.source && this.source.disconnect) {
             this.source.disconnect(this.getCompression());
-            // this.getAnalyser().disconnect(this.getContext().destination);
             this.source.connect(this.getContext().destination);
         }
     }
 
     function reactivateCompression() {
         this.source.connect(this.getCompression());
-        // this.getAnalyser().connect(this.getContext().destination);
         this.isActive = true;
     }
 
     function getProperties() {
         return this.properties || (this.properties = {
-            threshold: -50,
+            threshold: -35,
             knee: 40,
             ratio: 12,
             reduction: -40,
